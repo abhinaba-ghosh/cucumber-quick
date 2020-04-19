@@ -129,6 +129,9 @@ The extension needs to understand what tool you are using and what ae the differ
 - If _Run Feature_ is selected, the complete feature file will be executed
 - The test execution will be performed in debug mode, so if can debug certain codes using breakpoints as well.
 
-If it works for you , give a [Star](https://github.com/abhinaba1080/protractor-react-selector)! :star:
+## Log Issues
+Log your issues and feature request [here](https://github.com/abhinaba-ghosh/cucumber-quick/issues)
+
+If it works for you , give a [Star](https://github.com/abhinaba-ghosh/cucumber-quick/issues)! :star:
 
 _Copyright &copy; 2020- [Abhinaba Ghosh](https://www.linkedin.com/in/abhinaba-ghosh-9a2ab8a0/)_
