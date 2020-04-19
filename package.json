@@ -2,10 +2,19 @@
 	"name": "cucumberquick",
 	"displayName": "Cucumber Quick",
 	"description": "Cucumber Quick - a quick cucumber executer",
-	"version": "1.0.1-beta",
+	"version": "1.0.1",
+	"publisher": "AbhinabaGhosh",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
+	  "homepage": "https://github.com/abhinaba-ghosh/cucumber-quick",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/abhinaba-ghosh/cucumber-quick/"
+    },
+    "bugs": {
+        "url": "https://github.com/abhinaba-ghosh/cucumber-quick/issues"
+    },
 	"categories": [
 		"Programming Languages"
 	],

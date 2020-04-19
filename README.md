@@ -125,7 +125,6 @@ The extension needs to understand what tool you are using and what ae the differ
 - Navigate to a specific .feature file
 - right click on any scenario name/ scenario outline name
 - You can choose two options from the context menu - _Run Scenario_ and _Run Feature_
-  ![extensionscreen](./media/plugin.png)
 - If _Run Scenario_ is selected, only that specific scenario will be executed
 - If _Run Feature_ is selected, the complete feature file will be executed
 - The test execution will be performed in debug mode, so if can debug certain codes using breakpoints as well.
