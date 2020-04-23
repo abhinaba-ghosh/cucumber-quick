@@ -1,45 +1,35 @@
 import * as vscode from 'vscode';
-import { generateExecutableScenarioConfiguration, getScenarioName } from './utils/scenario';
-import { getExistingDebugConfiguration, decomposeExecutableScenarioConfiguration } from './utils/common';
-import { generateExecutableFeatureConfiguration, getFeatureFilePath } from './utils/feature';
-
-const workspaceFolder: any = vscode.window.activeTextEditor?.document.uri;
+import {
+	getCucumberQuickObject,
+	createCommandToExecuteFeature,
+	executeCucumberQuickCommand,
+	createCommandToExecuteScenario,
+	getScenarioName,
+	getCucumberQuickScript,
+	getCucumberQuickTool,
+} from './utils';
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(runScenarioDisposable);
 	context.subscriptions.push(runFeatureDisposable);
 }
 
-const runScenarioDisposable = vscode.commands.registerCommand('execute.scenario', async () => {
-	vscode.debug
-		.startDebugging(
-			vscode.workspace.getWorkspaceFolder(workspaceFolder),
-			generateExecutableScenarioConfiguration(getExistingDebugConfiguration(), getScenarioName(), getFeatureFilePath())
-		)
-		.then(
-			() => {
-				decomposeExecutableScenarioConfiguration(getExistingDebugConfiguration());
-				vscode.window.showInformationMessage('Scenario execution started successfully');
-			},
-			(err) => {
-				vscode.window.showInformationMessage('Error: ' + err.message);
-			}
-		);
+const runScenarioDisposable = vscode.commands.registerCommand('execute.scenario', () => {
+	const cucumberQuickObject = getCucumberQuickObject();
+	const cucumberQuickScript: string = getCucumberQuickScript(cucumberQuickObject);
+	const currentScenarioName: string = getScenarioName();
+	const toolUsed: string = getCucumberQuickTool(cucumberQuickObject);
+	const scenarioCommand: string = createCommandToExecuteScenario(currentScenarioName, toolUsed);
+	executeCucumberQuickCommand(cucumberQuickScript, scenarioCommand);
 });
 
-const runFeatureDisposable = vscode.commands.registerCommand('execute.feature', async () => {
-	vscode.debug
-		.startDebugging(
-			vscode.workspace.getWorkspaceFolder(workspaceFolder),
-			generateExecutableFeatureConfiguration(getExistingDebugConfiguration(), getFeatureFilePath())
-		)
-		.then(
-			() => {
-				decomposeExecutableScenarioConfiguration(getExistingDebugConfiguration());
-				vscode.window.showInformationMessage('Feature file execution started successfully');
-			},
-			(err) => {
-				vscode.window.showInformationMessage('Error: ' + err.message);
-			}
-		);
+const runFeatureDisposable = vscode.commands.registerCommand('execute.feature', () => {
+	const cucumberQuickObject = getCucumberQuickObject();
+	const cucumberQuickScript: string = getCucumberQuickScript(cucumberQuickObject);
+	const featureCommand: string = createCommandToExecuteFeature(cucumberQuickObject);
+	const toolUsed: string = getCucumberQuickTool(cucumberQuickObject);
+	executeCucumberQuickCommand(cucumberQuickScript, featureCommand, toolUsed);
 });
+
+// This method is called when the extension is deactivated
+export function deactivate() {}
