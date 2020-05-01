@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import { startProcess } from './executeCommand';
 
 const workspaceFolder: vscode.Uri | any = vscode.window.activeTextEditor?.document.uri;
 
@@ -16,7 +17,7 @@ export const getCucumberQuickObject = (): CucumberQuickConfiguration => {
 		tool: 'default',
 		script: 'default',
 	};
-	console.log('workspaceFolder:', workspaceFolder);
+	// console.log('workspaceFolder:', vscode.workspace.getWorkspaceFolder(workspaceFolder));
 	try {
 		quickConfiguration = JSON.parse(
 			fs.readFileSync(
@@ -27,7 +28,7 @@ export const getCucumberQuickObject = (): CucumberQuickConfiguration => {
 	} catch (err) {
 		quickConfiguration = undefined;
 	}
-	console.log('quickConfiguration:', quickConfiguration);
+	// console.log('quickConfiguration:', quickConfiguration);
 
 	if (quickConfiguration && quickConfiguration.tool !== 'default' && quickConfiguration.script !== 'default') {
 		return quickConfiguration;
@@ -58,9 +59,18 @@ export const getCucumberQuickTool = (cucumberQuickConfig: CucumberQuickConfigura
  * @param tool
  */
 export const executeCucumberQuickCommand = (script: string, command: string, tool?: string) => {
-	const terminal = getActiveTerminal();
-	terminal?.show();
-	tool === 'cucumberjs' ? terminal?.sendText(`${command}`) : terminal?.sendText(`${script} ${command}`);
+	// const terminal = getActiveTerminal();
+	// terminal?.show();
+	const executableCommand: string = tool === 'cucumberjs' ? `${command}` : `${script} ${command}`;
+
+	if (tool === 'cypress') {
+		const terminal = getActiveTerminal();
+		terminal?.show();
+		terminal.sendText('clear');
+		terminal.sendText(executableCommand);
+	} else {
+		startProcess(executableCommand);
+	}
 };
 
 /**
@@ -75,14 +85,18 @@ const getActiveTerminal = () => {
  * This method will throw error if user selects any line except Scenario or Scenario outline
  */
 export const getScenarioName = () => {
-	const selectedLine: any = vscode.window.activeTextEditor?.document.lineAt(
+	const selectedLine: string | undefined = vscode.window.activeTextEditor?.document.lineAt(
 		vscode.window.activeTextEditor.selection.active.line
 	).text;
+	console.log('selectedLine:', selectedLine);
+
 	if (selectedLine?.includes('Scenario')) {
 		return selectedLine
 			.replace(/(Scenario:|Scenario Outline:)/, '')
 			.replace(/^\s\s*/, '')
 			.replace(/\s\s*$/, '');
+	} else if (selectedLine?.includes('@')) {
+		return selectedLine.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 	} else {
 		vscode.window.showErrorMessage(
 			`Incorrect line selected: ${selectedLine}.\n Please select Scenario or Scenario Outline`
@@ -97,13 +111,17 @@ export const getScenarioName = () => {
  * @param scenarioName
  */
 export const createCommandToExecuteScenario = (scenarioName: string, tool: string): string => {
-	const toolCommands = new Map()
+	if (tool === 'cypress' && !scenarioName.includes('@')) {
+		vscode.window.showErrorMessage(
+			`Cypress cucumber preprocessor does not support running scenario by scenario name. Right click on the Tags and press 'Run Cucumber Scenario'`
+		);
+		throw new Error('Scenario Name incorrect. Please select scenario');
+	}
+	const toolCommands: Map<any, any> = new Map()
 		.set('protractor', `--cucumberOpts.name="${scenarioName}"`)
 		.set('webdriverio', `--cucumberOpts.name="${scenarioName}"`)
-		// .set('cypress', `--cucumberOpts.name="${scenarioName}"`)
+		.set('cypress', `run -e TAGS="${scenarioName.split(/(\s+)/)[0]}"`)
 		.set('cucumberjs', `--name "${scenarioName}"`);
-
-	console.log('toolCommands.get(tool):', toolCommands.get(tool));
 
 	if (toolCommands.get(tool) === undefined) {
 		vscode.window.showErrorMessage(
@@ -120,14 +138,18 @@ export const createCommandToExecuteScenario = (scenarioName: string, tool: strin
  */
 export const createCommandToExecuteFeature = (cucumberQuickConfiguration: CucumberQuickConfiguration): string => {
 	const currentFeatureFilePath: string | undefined = vscode.window.activeTextEditor?.document.uri.fsPath;
+	const currentRootFolderName: string | undefined = vscode.workspace.getWorkspaceFolder(workspaceFolder)?.name;
 
 	const toolCommands = new Map()
 		.set('protractor', `--specs="${currentFeatureFilePath}"`)
 		.set('webdriverio', `--spec="${currentFeatureFilePath}"`)
-		// .set('cypress', `run -e GLOB="${currentFeatureFilePath}"`)
+		.set(
+			'cypress',
+			`run -e GLOB="${currentFeatureFilePath?.replace(new RegExp('.*' + currentRootFolderName), '').substr(1)}"`
+		)
 		.set('cucumberjs', getCucumberJsFeatureExecutable(cucumberQuickConfiguration, currentFeatureFilePath));
 
-	console.log('toolCommands.get(tool):', toolCommands.get(cucumberQuickConfiguration.tool));
+	// console.log('toolCommands.get(tool):', toolCommands.get(cucumberQuickConfiguration.tool));
 
 	if (currentFeatureFilePath === undefined && toolCommands.get(cucumberQuickConfiguration.tool) === undefined) {
 		vscode.window.showErrorMessage(
@@ -138,6 +160,11 @@ export const createCommandToExecuteFeature = (cucumberQuickConfiguration: Cucumb
 	return toolCommands.get(cucumberQuickConfiguration.tool);
 };
 
+/**
+ *
+ * @param cucumberQuickConfiguration
+ * @param currentFeatureFilePath
+ */
 const getCucumberJsFeatureExecutable = (
 	cucumberQuickConfiguration: CucumberQuickConfiguration,
 	currentFeatureFilePath: string | undefined

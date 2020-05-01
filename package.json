@@ -2,19 +2,11 @@
 	"name": "cucumberquick",
 	"displayName": "Cucumber Quick",
 	"description": "Cucumber Quick - a quick cucumber executer",
-	"version": "1.0.3",
+	"version": "2.0.0",
 	"publisher": "AbhinabaGhosh",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
-	  "homepage": "https://github.com/abhinaba-ghosh/cucumber-quick",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/abhinaba-ghosh/cucumber-quick/"
-    },
-    "bugs": {
-        "url": "https://github.com/abhinaba-ghosh/cucumber-quick/issues"
-    },
 	"categories": [
 		"Programming Languages"
 	],
@@ -29,11 +21,11 @@
 		"commands": [
 			{
 				"command": "execute.scenario",
-				"title": "Run Scenario"
+				"title": "Run Cucumber Scenario"
 			},
 			{
 				"command": "execute.feature",
-				"title": "Run Feature"
+				"title": "Run Cucumber Feature"
 			}
 		],
 		"menus": {
@@ -54,6 +46,10 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js"
+	},
+	"dependencies": {
+		"spawn-command": "0.0.2-1",
+		"tree-kill": "^1.1.0"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.44.0",

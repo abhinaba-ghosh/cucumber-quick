@@ -8,19 +8,30 @@ Currently we support:
 
 - Protractor Cucumber
 - WendDriverIo Cucumber
+- Cypress Cucumber Pre-processor
 - Native CucumberJS
 - Serenity-JS
-
-## Next Release Candidate:
-
-- Add support for Cypress-Cucumber
 
 ## Setup Run Configuration
 
 The extension needs to understand what tool you are using and what ae the different parameters specific to your test execution. Follow the steps below:
 
 1. create settings.json file under .vscode folder (ignore if already created)
-2. create cucumber-quick option for the specific tool you are using
+2. create cucumber-quick option for the specific tool you are using. The configuration structure is shown below:
+
+```ts
+// .vscode > settings.json
+
+{
+  // rest of the configuration
+  "cucumber-quick": {
+		"tool": "tool-name", // supported- protrator/webdriverio/cypress/cucumberjs
+		"script": "npx tool-name relative-path/to/configurations" // the script you naturally run to kick-start the execution
+	}
+}
+
+
+```
 
 #### Protractor-Cucumber/ SerenityJS Configuration
 
@@ -28,10 +39,9 @@ The extension needs to understand what tool you are using and what ae the differ
 // .vscode > settings.json
 
 {
-  // rest of the configuration
   "cucumber-quick": {
 		"tool": "protractor",
-		"script": "./node_modules/.bin/protractor protractor.conf.js"
+		"script": "npx protractor relative-path/to/protractor.conf.js"
 	}
 }
 
@@ -39,18 +49,37 @@ The extension needs to understand what tool you are using and what ae the differ
 
 #### WebDriverIO Configuration
 
-> Make sure the WebDriverIO-cucumber setup uses wdio-test-runner, that means, it should have cucumberOpts enabled. Remember, the cucumber-boilerplate provided by WebDriverIO uses yadda as cucumber framework. In that case, this extension will not work. But once you switch to wdio-test-runner, this extension will work like magic!
+- Make sure the WebDriverIO-cucumber setup uses wdio-test-runner, that means, it should have cucumberOpts enabled. Remember, the cucumber-boilerplate provided by WebDriverIO uses yadda as cucumber framework. In that case, this extension will not work. But once you switch to wdio-test-runner, this extension will work like magic!
 
 ```ts
 // .vscode > settings.json
 
 {
-  // rest of the configuration
   "cucumber-quick": {
 		"tool": "webdriverio",
-		"script": "./node_modules/.bin/wdio wdio.conf.js"
+		"script": "npx wdio relative-path/to/wdio.conf.js"
 	}
 }
+
+```
+
+#### Cypress-Cucumber-Preprocessor Configuration
+
+- Cypress cucumber preprocessor currently support ruining specific features. Running specific scenario by scenario name is still not supported by cypress-cucumber-preprocessor. It supports to run specific scenario by TAGS. You need to right-click on the Tags name in this case.
+
+- Cucumber-Quick only support Cypress-Cucumber-Preprocessor V 2.1.0 or higher.
+
+- For other tools, execution happens in VSCode Output terminal, but for Cypress, execution happens in Integrated terminal.
+
+```ts
+// .vscode > settings.json
+{
+	"cucumber-quick": {
+		"tool": "cypress",
+		"script": "npx cypress-tags"
+	}
+}
+
 
 ```
 
@@ -64,7 +93,7 @@ The extension needs to understand what tool you are using and what ae the differ
 {
 	"cucumber-quick": {
     "tool": "cucumberjs",
-    "script": "./node_modules/.bin/cucumber-js test/**/*.feature --require test/**/*.js"
+    "script": "npx cucumber-js relative-path/to/**/*.feature --require relative-path/to/**/*.js"
   }
 }
 
@@ -73,11 +102,11 @@ The extension needs to understand what tool you are using and what ae the differ
 ## Run Scenarios and Features
 
 - Navigate to a specific .feature file
-- right click on any scenario name/ scenario outline name
-- You can choose two options from the context menu - _Run Scenario_ and _Run Feature_
+- Right click on any scenario name/ scenario outline name
+- You can choose two options from the context menu - _Run Cucumber Scenario_ and _Run Cucumber Feature_
 - If _Run Scenario_ is selected, only that specific scenario will be executed
 - If _Run Feature_ is selected, the complete feature file will be executed
-- The test execution will be performed in Integrated Terminal.
+- The test execution will be performed in debug mode, so if can debug certain codes using breakpoints as well.
 
 ## Log Issues
 
