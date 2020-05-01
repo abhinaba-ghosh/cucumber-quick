@@ -7,7 +7,7 @@ Cucumber-Quick helps you to run cucumber scenario and features directly from vsc
 Currently we support:
 
 - Protractor Cucumber
-- WendDriverIo Cucumber
+- WebDriverIo Cucumber
 - Cypress Cucumber Pre-processor
 - Native CucumberJS
 - Serenity-JS
