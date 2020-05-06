@@ -23,10 +23,9 @@ The extension needs to understand what tool you are using and what ae the differ
 // .vscode > settings.json
 
 {
-  // rest of the configuration
   "cucumber-quick": {
-		"tool": "tool-name", // supported- protrator/webdriverio/cypress/cucumberjs
-		"script": "npx tool-name relative-path/to/configurations" // the script you naturally run to kick-start the execution
+		"tool": "tool-name",
+		"script": "npx tool-name relative-path/to/configurations"
 	}
 }
 

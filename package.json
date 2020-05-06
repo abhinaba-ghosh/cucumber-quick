@@ -2,7 +2,7 @@
 	"name": "cucumberquick",
 	"displayName": "Cucumber Quick",
 	"description": "Cucumber Quick - a quick cucumber executer",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"publisher": "AbhinabaGhosh",
 	"engines": {
 		"vscode": "^1.44.0"

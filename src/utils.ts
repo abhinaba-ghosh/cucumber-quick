@@ -13,11 +13,8 @@ interface CucumberQuickConfiguration {
  * Collect cucumber-quick configuration object from .vscode/settings.json
  */
 export const getCucumberQuickObject = (): CucumberQuickConfiguration => {
-	let quickConfiguration: CucumberQuickConfiguration | undefined = {
-		tool: 'default',
-		script: 'default',
-	};
-	// console.log('workspaceFolder:', vscode.workspace.getWorkspaceFolder(workspaceFolder));
+	let quickConfiguration: CucumberQuickConfiguration;
+	console.log('workspaceFolder:', vscode.workspace.getWorkspaceFolder(workspaceFolder));
 	try {
 		quickConfiguration = JSON.parse(
 			fs.readFileSync(
@@ -26,11 +23,11 @@ export const getCucumberQuickObject = (): CucumberQuickConfiguration => {
 			)
 		)['cucumber-quick'];
 	} catch (err) {
-		quickConfiguration = undefined;
+		vscode.window.showErrorMessage('unable to read cucumber-quick configuration', err);
+		throw new Error(err);
 	}
-	// console.log('quickConfiguration:', quickConfiguration);
 
-	if (quickConfiguration && quickConfiguration.tool !== 'default' && quickConfiguration.script !== 'default') {
+	if (quickConfiguration) {
 		return quickConfiguration;
 	} else {
 		vscode.window.showErrorMessage('cucumber-quick configuration not found in .vscode/settings.json');
