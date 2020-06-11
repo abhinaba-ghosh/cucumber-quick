@@ -50,6 +50,8 @@ The extension needs to understand what tool you are using and what ae the differ
 
 - Make sure the WebDriverIO-cucumber setup uses wdio-test-runner, that means, it should have cucumberOpts enabled. Remember, the cucumber-boilerplate provided by WebDriverIO uses yadda as cucumber framework. In that case, this extension will not work. But once you switch to wdio-test-runner, this extension will work like magic!
 
+- Find a video [here](https://github.com/abhinaba-ghosh/cucumber-quick/files/4728370/cucumber-quick.webm.zip) to get more about WDIO configuration
+
 ```ts
 // .vscode > settings.json
 
